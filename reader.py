@@ -46,10 +46,27 @@ def calculate_aqi_10(median_value):
 
     return round(aqi)
 
+def category_level(aqi):
+    category = ""
+    if aqi <= 50:
+        category = "Good"
+    elif aqi <= 100:
+        category = "Moderate"
+    elif aqi <= 150:
+        category = "Unhealthy for Sensitive Group"
+    elif aqi <= 200:
+        category = "Unhealthy"
+    elif aqi <= 300:
+        category = "Very Unhealthy"
+    else:
+        category = "Hazardous"
+    return category
+
+
 # temp = []
 temp = {}
 for sht in sheet_list:
-    temp[sht] = {'25': [],'10':[]}
+    temp[sht] = {'25': {'nilai_aqi':[],'level':[]},'10':{'nilai_aqi':[],'level':[]}}
     # print(sht)
     df = pd.read_excel('template_upload.xlsx',sht)
     # print(df)
@@ -58,12 +75,21 @@ for sht in sheet_list:
 # print("-----------------------")
     for record in df['median_2.5']: ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
         val = calculate_aqi_2_5(record)
-        temp[sht]['25'].append(record)
+        val_category = category_level(record)
+        temp[sht]['25']['nilai_aqi'].append(val)
+        temp[sht]['25']['level'].append(val_category)
     for record in df['median_10']: ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
         val = calculate_aqi_10(record)
-        temp[sht]['10'].append(record)
+        val_category = category_level(record)
+        temp[sht]['10']['nilai_aqi'].append(val)
+        temp[sht]['10']['level'].append(val_category)
 
-print(temp['jakarta']['10'])
+
+# looping data temp untuk membuat report sample pengambilan data
+print(temp)
+# print(temp['jakarta']['10'])
+# print(temp['jakarta']['10']['nilai_aqi'])
+# print(temp['jakarta']['10']['level'])
 
 
 
