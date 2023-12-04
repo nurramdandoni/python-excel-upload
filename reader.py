@@ -65,29 +65,50 @@ def category_level(aqi):
 
 # temp = []
 temp = {}
+temp_tgl = {}
+temp_final = {}
 for sht in sheet_list:
+    low = True
+    temp_tgl[sht] = {'tgl':[]}
     temp[sht] = {'25': {'nilai_aqi':[],'level':[]},'10':{'nilai_aqi':[],'level':[]}}
+    temp_final[sht] = []
     # print(sht)
     df = pd.read_excel('template_upload.xlsx',sht)
     # print(df)
 
 # df = pd.read_excel('template_upload.xlsx','jakarta')
 # print("-----------------------")
-    for record in df['median_2.5']: ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
+    # status_max = False
+    for record in df['date']: ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
+        tmp = str(record)
+        explode = tmp.split('T')
+        temp_tgl[sht]['tgl'].append(explode[0])
+    for idx, record in enumerate(df['median_2.5']): ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
         val = calculate_aqi_2_5(record)
         val_category = category_level(record)
         temp[sht]['25']['nilai_aqi'].append(val)
         temp[sht]['25']['level'].append(val_category)
-    for record in df['median_10']: ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
+
+        # final 
+        temp_final[sht].append({'tgl':temp_tgl[sht]['tgl'][idx],'val':{'25':{'nilai_aqi':val,'level':val_category},'10':{},'max':{}}})
+
+    for idx, record in enumerate(df['median_10']): ## ini dianggap nilai 2.5 dan 10 recordnya sama, jika berdeba perlu penyesuaian filter mana record lebih banyak sebagai acuan looping
         val = calculate_aqi_10(record)
         val_category = category_level(record)
         temp[sht]['10']['nilai_aqi'].append(val)
         temp[sht]['10']['level'].append(val_category)
 
+        # final 
+        temp_final[sht][idx]['val']['10'] = {'nilai_aqi':val,'level':val_category}
+        if(low):
+            temp_final[sht][idx]['val']['max'] = 200
+
+
 
 # looping data temp untuk membuat report sample pengambilan data
-print(temp)
-# print(temp['jakarta']['10'])
+# print(temp)
+print(temp_final)
+# print(temp['jakarta']['25']['nilai_aqi'])
 # print(temp['jakarta']['10']['nilai_aqi'])
 # print(temp['jakarta']['10']['level'])
 
