@@ -106,7 +106,7 @@ for sht in sheet_list:
 
 
 # looping data temp untuk membuat report sample pengambilan data
-# print(temp)
+# print(temp)7y
 print(temp_final)
 # print(temp['jakarta']['25']['nilai_aqi'])
 # print(temp['jakarta']['10']['nilai_aqi'])
